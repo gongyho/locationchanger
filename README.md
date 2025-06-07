@@ -1,28 +1,32 @@
-# Location Changer
+# 位置切换器 (Location Changer)
+forked from [eprev/locationchanger](https://github.com/eprev/locationchanger)
 
-It automatically changes OS X’s [network location](https://support.apple.com/en-us/HT202480)
-based on the name of Wi-Fi network and runs arbitrary scrips when it happens.
+该工具可根据Wi-Fi网络名称自动切换MacOS的[网络位置](https://support.apple.com/en-us/HT202480)，并在切换时运行自定义脚本。
+> 支持 macOS Sequoia(15.x)
+> 
+> 其他 macOS版本 待测试
 
-## Installation & Update
+## 安装与更新
 
 ```
-curl -L https://github.com/eprev/locationchanger/raw/master/locationchanger.sh | bash
+curl -L https://github.com/gongyho/locationchanger/raw/master/locationchanger.sh | bash
 ```
 
-It will ask you for a root password to install `locationchanger` to the */usr/local/bin* directory.
+安装时会要求输入root密码，将`locationchanger`安装到*/usr/local/bin*目录。
 
-## Basic usage
+## !!! 卸载方法 !!!
 
-You have to name network locations after Wi-Fi networks. Let’s say, you need to have
-a specific network preferences for “Corp Wi-Fi” wireless network, then you have to create
-a location “Corp Wi-Fi”. Now, the network location will change to “Corp Wi-Fi” automatically,
-if you connect to that wireless network. And if you connect to the Wi-Fi network that you
-don’t have a location for, then the location will change to the default one (“Automatic”).
+```
+curl -L https://github.com/gongyho/locationchanger/raw/master/locationchanger_uninstall.sh | bash
+```
 
-If you want to run a script every time you connect to a specific Wi-Fi network, then put
-those scripts in *~/.locations* and name them after Wi-Fi networks (making sure you set
-corresponding network locations). For instance, you have a script that changes security
-preferences when you connect to the “Corp Wi-Fi” network:
+该操作将删除`/usr/local/bin/locationchanger`和`~/Library/LaunchAgents/LocationChanger.plist`
+
+## 基本使用
+
+您需要按照Wi-Fi网络名称来命名网络位置。例如，若需要为"Corp Wi-Fi"无线网络设置特定网络配置，则应创建名为"Corp Wi-Fi"的位置。当连接至该无线网络时，系统将自动切换至对应网络位置。若连接的网络没有对应位置配置，则会切换至默认位置("Automatic")。
+
+如需在连接特定Wi-Fi时运行脚本，请将脚本存放于`~/.locations`目录，并按Wi-Fi网络命名（需确保已配置对应网络位置）。例如，以下脚本在连接"Corp Wi-Fi"时修改安全设置：
 
 ```bash
 #!/usr/bin/env bash
@@ -32,8 +36,7 @@ exec 2>&1
 osascript -e 'tell application "System Events" to set require password to wake of security preferences to true'
 ```
 
-Then name this script as *~/.locations/Corp Wi-Fi*. And you might want to create
-*~/.locations/Automatic* that will reset those changes:
+将此脚本保存为`~/.locations/Corp Wi-Fi`。同时可创建`~/.locations/Automatic`来恢复默认设置：
 
 ```bash
 #!/usr/bin/env bash
@@ -43,25 +46,25 @@ exec 2>&1
 osascript -e 'tell application "System Events" to set require password to wake of security preferences to false'
 ```
 
-## Aliasing
+## 别名功能
 
-If you want to share one network location between different wireless networks (for instance, you have a wireless router which broadcasts on 2.4 and 5GHz bands simultaneously), then you can create a configuration file *~/.locations/locations.conf* (plain text file with simple key-value pairs, no spaces in between):
+若需为不同无线网络共享同一网络位置（例如路由器同时广播2.4GHz和5GHz信号），可创建配置文件`~/.locations/locations.conf`（纯文本键值对文件，等号两边无空格）：
 
 ```bash
 Wi-Fi_5GHz=Wi-Fi
 ```
 
-Where the keys are the wireless network names and the values are the desired location names.
+其中键名为无线网络名称，键值为目标位置名称。
 
-## Troubleshooting
+## 故障排查
 
-It writes quite extensive information to the log file every time the wireless network changes:
-
+每次无线网络变更时，工具会记录详细日志：
+> 日志最大保存1000行
 ```bash
 tail -f ~/Library/Logs/LocationChanger.log
 ```
 
-Sample output:
+示例输出：
 
 ```
 Connected to 'Wi-Fi_5GHz'
