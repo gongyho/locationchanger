@@ -12,7 +12,7 @@ forked from [eprev/locationchanger](https://github.com/eprev/locationchanger)
 curl -L https://github.com/gongyho/locationchanger/raw/master/locationchanger.sh | bash
 ```
 
-安装时会要求输入root密码，将`locationchanger`安装到*/usr/local/bin*目录。
+安装时会要求输入root密码，将`locationchanger`安装到`/usr/local/bin`目录。
 
 ## !!! 卸载方法 !!!
 
